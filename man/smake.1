@@ -1,0 +1,90 @@
+.\" Copyright (c) 1996 Craig Stuart Sapp, All rights reserved.  
+.\"
+.\"	@(#)smake.1	
+.\"
+.TH SMAKE 1 "December 20, 1996"
+.UC 5
+.SH NAME
+.I smake 
+\- Simple MAKE.  Executes a command string embedded in a file.
+.SH SYNOPSIS
+.in +\w'\fBsmake \fR'u
+.ti -\w'\fBsmake \fR'u
+\fBsmake \fR 
+[\fB\-s \fIskip\fR][\fB\-v \fIvariant\fR |\fB\-c\fR][\fB\-e|\-x\fR] \fR\fIinput-file\fR [\fIparameters\fR] 
+.SH DESCRIPTION
+.I Smake
+searches for the character pattern \fI$Smake:\fR in a file.  When it finds
+that pattern, smake will execute, as a shell command, the text following
+\fI$Smake:\fR to the end of the line.
+.LP
+There are several symbolic patterns that can be used in the embedded command:
+.LP
+.TP 9
+.BR %f
+If this character pattern is in the embedded command, the input filename passed 
+to \fIsmake\fR will be substituted.
+.TP 9
+.BR %b
+If this character pattern is in the command, the filename minus
+the characters after the last period will be removed, as well as the
+last period.  For example, the basename of 
+.I test.c 
+is 
+.IR test \ .
+.TP 9
+.BR %<newl>
+Where <newl> is the newline character. If % comes at the end of the 
+line with no other characters except the newline character following
+it, the embedded command continues on the following line.  The \fI\-s\fR
+option determines where the command resumes on the next line.
+.TP 9
+.BR %1 -- %9
+If any parameters follow the input-file on the command line, then
+these parameters get matched to the symbols %1, %2, etc. up to %9.
+If there is no passed parameter for a particular symbol, then it is 
+left unchanged in the command.
+.LP
+.SH OPTIONS
+.LP
+.TP 9
+.BR \-s\ \fIskip\fR
+.I skip
+is the number of characters to skip at the beginning of a new line for
+the shell command line\-continuation.  The default value of \fIskip\fR
+is 4.  It is an error to skip beyond the end of the line.
+.TP 9
+.BR \-v\ \fIvariant\fR
+.I variant
+is a string used to distinguish between different possible commands
+to extract.  The form of the marker in the file is
+\fI$Smake-variant:\fR.
+.TP 9
+.BR \-e\ 
+.I echo
+the embedded command string without executing it.
+.TP 9
+.BR \-x\ 
+.I execute
+the command string only, without printing it to the terminal as well.
+.TP 9
+.BR \-c\ \fIpattern\fR
+.I pattern
+is a string to replace the default marker \fI$Smake:\fR with
+\fIpattern\fR.
+.LP
+.SH EXAMPLES
+.DT
+.br
+A command to compile a c program, and strip the executable:
+.LP
+// $Smake: \ \  gcc -O -o %b %f && strip %b
+.LP
+A command to produce and display a PostScript file from a TeX file:
+.LP
+% $Smake: \ \   tex %b && dvips -o %b.ps %b && open %b.ps 
+.br
+.SH BUGS
+.DT
+.br
+Cannot use the -v option and the -c option at the same time.

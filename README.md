@@ -1,0 +1,73 @@
+
+# NAME
+     smake - Simple MAKE.  Executes a command string embedded in
+     a file.
+
+# SYNOPSIS
+     smake [-s skip][-v variant |-c][-e|-x] input-file [parame-
+           ters]
+
+# DESCRIPTION
+     Smake searches for the character pattern $Smake: in a file.
+     When it finds that pattern, smake will execute, as a shell
+     command, the text following $Smake: to the end of the line.
+
+     There are several symbolic patterns that can be used in the
+     embedded command:
+
+     %f       If this character pattern is in the embedded com-
+              mand, the input filename passed to smake will be
+              substituted.
+
+     %b       If this character pattern is in the command, the
+              filename minus the characters after the last period
+              will be removed, as well as the last period.  For
+              example, the basename of test.c is test .
+
+     %<newl>  Where <newl> is the newline character. If % comes
+              at the end of the line with no other characters
+              except the newline character following it, the
+              embedded command continues on the following line.
+              The -s option determines where the command resumes
+              on the next line.
+
+     %1--%9   If any parameters follow the input-file on the com-
+              mand line, then these parameters get matched to the
+              symbols %1, %2, etc. up to %9.  If there is no
+              passed parameter for a particular symbol, then it
+              is left unchanged in the command.
+
+# OPTIONS
+     -s skip  skip is the number of characters to skip at the
+              beginning of a new line for the shell command
+              line-continuation.  The default value of skip is 4.
+              It is an error to skip beyond the end of the line.
+
+     -v variant
+              variant is a string used to distinguish between
+              different possible commands to extract.  The form
+              of the marker in the file is $Smake-variant:.
+
+     -e       echo the embedded command string without executing
+              it.
+
+     -x       execute the command string only, without printing
+              it to the terminal as well.
+
+     -c pattern
+              pattern is a string to replace the default marker
+              $Smake: with pattern.
+
+# EXAMPLES
+     A command to compile a c program, and strip the executable:
+
+     // $Smake:    gcc -O -o %b %f && strip %b
+
+     A command to produce and display a PostScript file from a
+     TeX file:
+
+     % $Smake:     tex %b && dvips -o %b.ps %b && open %b.ps
+
+# LIMITATIONS
+     Cannot use the -v option and the -c option at the same time.
+
