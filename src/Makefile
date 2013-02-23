@@ -19,7 +19,7 @@ ENV =
 # Set the ARCH variable to compile 32-bit executable on 64-bit computer
 # (if you have 32-bit libraries installed on your 64-bit computer).
 # See the examples for ARCH on OS X and linux given in comments below.
-ARCH =  
+ARCH = 
 
 # Select options based on the Operating system type
 ifeq ($(origin OSTYPE), undefined)
