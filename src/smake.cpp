@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
    checkOptions(options, argc, argv);
 
    // Find name of file to extract command from:
-   filename = options.getArg(1);
+   filename = options.getArg(1).data();
    Basename = unsuffix(filename);
    ifstream inFile(filename);
    if (!inFile) {
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
    if (numPassParams > 0) {
       passParams = new const char*[numPassParams];
       for (int i=0; i<numPassParams; i++) {
-         passParams[i] = options.getArg(i+2);
+         passParams[i] = options.getArg(i+2).data();
       }
    }
 
@@ -187,10 +187,10 @@ void checkOptions(Options& opts, int argc, char* argv[]) {
    opts.process(argc, argv);
 
    if (opts.getBoolean("command-marker")) {
-      commandMarker = opts.getString("command-marker");
+      commandMarker = opts.getString("command-marker").data();
    }
    if (opts.getBoolean("variant")) {
-      variantSmake = opts.getString("variant");
+      variantSmake = opts.getString("variant").data();
    }
 
    numSkip = opts.getInteger("skip");
@@ -213,7 +213,7 @@ void checkOptions(Options& opts, int argc, char* argv[]) {
    }
 
    if (opts.getArgCount() < 1) {
-      usage(opts.getCommand());
+      usage(opts.getCommand().data());
       exit(1);
    }
 

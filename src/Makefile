@@ -25,7 +25,7 @@ ARCH =
 ifeq ($(origin OSTYPE), undefined)
    ifeq ($(shell uname),Darwin)
       OSTYPE = OSX
-      ENV = MACOSX_DEPLOYMENT_TARGET=10.4
+      ENV = MACOSX_DEPLOYMENT_TARGET=10.10
       # use the following to compile for 32-bit architecture on 64-bit comps:
       # ARCH = -m32 -arch i386
    else
@@ -36,9 +36,14 @@ ifeq ($(origin OSTYPE), undefined)
    endif
 endif
 
+CPP = Options.cpp
+
 COMPILER = LANG=C g++
 PREFLAGS = -O3
-CPP = Options.cpp Options_private.cpp
+
+# using C++ 2011 standard:
+PREFLAGS += -std=c++11
+
 
 # MinGW compiling setup (used to compile for Microsoft Windows but actual
 # compiling can be done in Linux). You have to install MinGW and this
@@ -52,6 +57,9 @@ all: smake
 
 smake:
 	$(ENV) $(COMPILER) $(ARCH) $(PREFLAGS) -o smake $(CPP) smake.cpp
+
+install:
+	cp smake /usr/local/bin/
 
 clean:
 	-rm smake
