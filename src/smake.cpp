@@ -22,8 +22,8 @@
 #include "Options.h"
 
 char         MagicString[]  = "$Smake:";    
-char*        Basename       = NULL;
-const char*  filename       = NULL;
+string       Basename;
+string       filename;
 const char** passParams     = NULL;
 int          numPassParams;
 
@@ -38,15 +38,15 @@ const char* commandMarker = NULL;  // -c: marker for command string start.
 const char* variantSmake  = NULL;  // -v: smake variant option
 
 // function declarations:
-int    backwardPosition   (char, char*);
-void   checkOptions       (Options& opts, int argc, char* argv[]);
-void   usage              (void);
-void   find               (const char*, istream&);
-void   getOptions         (void);
-char   nextChar           (istream&);
-void   readCommand        (stringstream&, const char*, istream&);
-char*  unsuffix           (const char* string);
-void   manpage            (void);
+int     backwardPosition   (char, char*);
+void    checkOptions       (Options& opts, int argc, char* argv[]);
+void    usage              (void);
+void    find               (const char*, istream&);
+void    getOptions         (void);
+char    nextChar           (istream&);
+void    readCommand        (stringstream&, const char*, istream&);
+string  unsuffix           (const string& str);
+void    manpage            (void);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +56,9 @@ int main(int argc, char* argv[]) {
    checkOptions(options, argc, argv);
 
    // Find name of file to extract command from:
-   filename = options.getArg(1).c_str();
+   filename = options.getArg(1);
    Basename = unsuffix(filename);
-   ifstream inFile(filename);
+   ifstream inFile(filename.c_str());
    if (!inFile) {
       cerr << "Cannot open file: " << filename << endl;
       exit(1);
@@ -91,8 +91,6 @@ int main(int argc, char* argv[]) {
    }
    
    // free variables on the heap:
-   if (Basename     != (void*)NULL) delete [] Basename;
-   if (variantSmake != (void*)NULL) delete [] variantSmake;
    if (passParams   != (void*)NULL) delete [] passParams;
 
    return 0;
@@ -147,23 +145,11 @@ int backwardPosition(char sought, const char *string) {
 // unsuffix -- remove the .* extension of a filename.
 //
 
-char* unsuffix(const char *string) {
-   int dotPosition;
-   char *base;
-
-   dotPosition = backwardPosition('.', string);
-
-   if (dotPosition != -1) {
-      base = new char[dotPosition+1];
-      if (base == NULL) {
-         cerr << "Out of memory." << endl;
-         exit(1);
-      }
-      strncpy(base, string, dotPosition);
-      base[dotPosition+1] = '\0';
-   } else {
-      base = new char[1];
-      base[0] = '\0';
+string unsuffix(const string& str) {
+   string base;
+   auto dot = str.rfind(".");
+   if (dot != string::npos) {
+      base = str.substr(0, dot);
    }
    return base;
 }
