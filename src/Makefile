@@ -59,7 +59,7 @@ smake:
 	$(ENV) $(COMPILER) $(ARCH) $(PREFLAGS) -o smake $(CPP) smake.cpp
 
 install:
-	cp smake /usr/local/bin/
+	sudo cp smake /usr/local/bin/
 
 clean:
 	-rm smake
